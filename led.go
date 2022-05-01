@@ -1,9 +1,7 @@
-package main
+package Falcon8
 
 import (
-	"encoding/hex"
 	"errors"
-	"fmt"
 	"image/color"
 )
 
@@ -26,6 +24,20 @@ const (
 	KeyIndex7
 	// Second row, fourth key (bottom right)
 	KeyIndex8
+)
+
+var (
+	// Maps all the key indexes to their respective byte positions in the USB packet
+	KeyIndexLEDMap = map[KeyIndex][3]byte{
+		KeyIndex1: {0x3A, 0x53, 0x6C},
+		KeyIndex2: {0x3B, 0x54, 0x6D},
+		KeyIndex3: {0x40, 0x59, 0x72},
+		KeyIndex4: {0x3C, 0x55, 0x6E},
+		KeyIndex5: {0x3F, 0x58, 0x71},
+		KeyIndex6: {0x45, 0x5E, 0x77},
+		KeyIndex7: {0x4A, 0x63, 0x7C},
+		KeyIndex8: {0x41, 0x5A, 0x73},
+	}
 )
 
 func (k KeyIndex) Valid() bool {
@@ -76,7 +88,7 @@ type LEDControls struct {
 	Brightness *Brightness              // 0x86
 	Flow       *Flow                    // 0x87
 	Color      color.Color              // 0x88 - 0x8A
-	KeyColors  map[KeyIndex]color.Color // sporadic occurrences
+	KeyColors  map[KeyIndex]color.Color // sporadic occurrences, refer to KeyIndexLEDMap
 }
 
 func (l *LEDControls) SetLEDMode(m LEDMode) *LEDControls {
@@ -89,20 +101,21 @@ func (l *LEDControls) SetBrightness(b Brightness) *LEDControls {
 	return l
 }
 
+// Only works with LEDMODE_RGB_WAVE
 func (l *LEDControls) SetFlow(f Flow) *LEDControls {
 	l.Flow = &f
 	return l
 }
 
+// Set the overall color of the LEDs, works with LEDMODE_{NORMAL, BREATHING, FADE_IN, FADE_OUT, LAST_KEYSTROKE}
 func (l *LEDControls) SetColor(c color.Color) *LEDControls {
 	l.Color = c
 	return l
 }
 
-// Pass in the key index and the color to set the LED to, mode must be set to LEDMODE_CUSTOM for this to work
+// Pass in the key index and the color to set the LED to, mode must be set to LEDMODE_CUSTOM otherwise this will have no effect.
 func (l *LEDControls) SetKeyColor(k KeyIndex, c color.Color) *LEDControls {
 	if !k.Valid() {
-		fmt.Println("Invalid key index:", k)
 		return l
 	}
 	if l.KeyColors == nil {
@@ -112,8 +125,8 @@ func (l *LEDControls) SetKeyColor(k KeyIndex, c color.Color) *LEDControls {
 	return l
 }
 
-// Pass in the key index to turn off its LED, mode must be set to LEDMODE_CUSTOM for this to work
-func (l *LEDControls) SetKeyColorDisabled(k KeyIndex) *LEDControls {
+// Pass in the key index to turn off its LED, mode must be set to LEDMODE_CUSTOM otherwise this will have no effect.
+func (l *LEDControls) DisableKeyColor(k KeyIndex) *LEDControls {
 	if !k.Valid() {
 		return l
 	}
@@ -125,46 +138,16 @@ func (l *LEDControls) SetKeyColorDisabled(k KeyIndex) *LEDControls {
 }
 
 // Do not use or modify this function
-func (l *LEDControls) SetKeyColorInByteArray(b []byte, k KeyIndex, c color.Color) {
+func (l *LEDControls) setKeyColorsInByteArray(b []byte, k KeyIndex, c color.Color) {
 	_r, _g, _b, _ := c.RGBA()
-	switch k {
-	case KeyIndex1:
-		fmt.Println("SETTING KEY COLOR:", k, c)
-		b[0x3A] = byte(_r)
-		b[0x53] = byte(_g)
-		b[0x6C] = byte(_b)
-	case KeyIndex2:
-		b[0x3B] = byte(_r)
-		b[0x54] = byte(_g)
-		b[0x6D] = byte(_b)
-	case KeyIndex3:
-		b[0x40] = byte(_r)
-		b[0x59] = byte(_g)
-		b[0x72] = byte(_b)
-	case KeyIndex4:
-		b[0x3C] = byte(_r)
-		b[0x55] = byte(_g)
-		b[0x6E] = byte(_b)
-	case KeyIndex5:
-		b[0x3F] = byte(_r)
-		b[0x58] = byte(_g)
-		b[0x71] = byte(_b)
-	case KeyIndex6:
-		b[0x45] = byte(_r)
-		b[0x5E] = byte(_g)
-		b[0x77] = byte(_b)
-	case KeyIndex7:
-		b[0x4A] = byte(_r)
-		b[0x63] = byte(_g)
-		b[0x7C] = byte(_b)
-	case KeyIndex8:
-		b[0x41] = byte(_r)
-		b[0x5A] = byte(_g)
-		b[0x73] = byte(_b)
-	}
+
+	b[KeyIndexLEDMap[k][0]] = byte(_r)
+	b[KeyIndexLEDMap[k][1]] = byte(_g)
+	b[KeyIndexLEDMap[k][2]] = byte(_b)
 }
 
-func (l *LEDControls) SetByteArray(b []byte) error {
+// Writes Mode, Brightness, Flow, Color and KeyColors to the byte array
+func (l *LEDControls) setByteArray(b []byte) error {
 	if len(b) != 264 {
 		return errors.New("invalid byte array length, must be 264 for Falcon8")
 	}
@@ -172,12 +155,15 @@ func (l *LEDControls) SetByteArray(b []byte) error {
 	if l.LEDMode != nil {
 		b[LEDModeIndex] = byte(*l.LEDMode)
 	}
+
 	if l.Brightness != nil {
 		b[BrightnessIndex] = byte(*l.Brightness)
 	}
+
 	if l.Flow != nil {
 		b[FlowIndex] = byte(*l.Flow)
 	}
+
 	if l.Color != nil {
 		_r, _g, _b, _ := l.Color.RGBA()
 		b[0x88] = byte(_r)
@@ -185,20 +171,18 @@ func (l *LEDControls) SetByteArray(b []byte) error {
 		b[0x8A] = byte(_b)
 	}
 
-	fmt.Println("BEFORE\n", hex.Dump(b))
 	if l.KeyColors != nil {
 		for k, c := range l.KeyColors {
 			if !k.Valid() {
 				continue
 			}
-			fmt.Println("SETTING KEY COLOR:", k, c)
-			l.SetKeyColorInByteArray(b, k, c)
+			l.setKeyColorsInByteArray(b, k, c)
 		}
 	}
-	fmt.Println("AFTER\n", hex.Dump(b))
 	return nil
 }
 
+// Call this to commit the changes to LEDControls to the device
 func (f *Falcon8) UpdateLEDs() error {
 	data := make([]byte, 264)
 	data[0x00] = 0x07
@@ -221,15 +205,11 @@ func (f *Falcon8) UpdateLEDs() error {
 		return err
 	}
 
-	err = f.LEDControls.SetByteArray(data)
+	// Write Falcon-8 LED controls to USB packet
+	err = f.LEDControls.setByteArray(data)
 	if err != nil {
 		return err
 	}
 
-	err = f.setReport(data) // SET 2
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return f.setReport(data) // SET 2
 }

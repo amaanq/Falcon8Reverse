@@ -1,4 +1,4 @@
-package main
+package Falcon8
 
 import (
 	"errors"
@@ -19,14 +19,17 @@ func (f *Falcon8) getReport(data []byte) error {
 	return err
 }
 
-// Clear last 56 bytes of data
+// Clear last 56 bytes of data and set data[0x01] to 0x02
 func (f *Falcon8) prepareSet2(data []byte) error {
 	if len(data) != 264 {
 		return errors.New("invalid byte array length, must be 264 for Falcon8")
 	}
+
 	data[0x01] = 0x02 // second byte goes from 0x82 to 0x02
+
 	for i := range data[0xD0:] {
 		data[0xD0+i] = 0x00 // clear last 56 bytes
 	}
+
 	return nil
 }

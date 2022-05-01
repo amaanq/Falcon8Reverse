@@ -1,24 +1,16 @@
-package main
+package Falcon8
 
 import (
 	"fmt"
 	"image/color"
-	"math/rand"
 	"os"
 	"os/signal"
-	"time"
+	"testing"
 
 	"github.com/google/gousb"
 )
 
-const (
-	VENDOR_ID  = 0x195D // Itron Technology iONE
-	PRODUCT_ID = 0x6009 // Unknown
-
-	DELAY_TIME = time.Millisecond * 50 // Someone else can test this for themselves, this works for me
-)
-
-func main() {
+func Test_Debug(t *testing.T) {
 	falcon8, err := New()
 
 	if err != nil {
@@ -26,7 +18,10 @@ func main() {
 	}
 	fmt.Println(falcon8.Device.Desc)
 
-	falcon8.Device.SetAutoDetach(true)
+	err = falcon8.Device.SetAutoDetach(true)
+	if err != nil {
+		panic(err)
+	}
 
 	for num := range falcon8.Device.Desc.Configs {
 		config, _ := falcon8.Device.Config(num)
@@ -38,6 +33,9 @@ func main() {
 
 		// Iterate through available interfaces for this configuration
 		for _, desc := range config.Desc.Interfaces {
+			if desc.Number != 2 {
+				continue
+			}
 			intf, err := config.Interface(desc.Number, 0)
 			if err != nil {
 				panic(err)
@@ -61,35 +59,36 @@ func main() {
 		}
 	}
 
-	// blue
+	// Red
 	if false {
 		falcon8.LEDControls.SetLEDMode(LEDMODE_BREATHING).SetBrightness(BRIGHTNESS_MAX).SetFlow(FLOW_SPINNING).SetColor(color.RGBA{255, 0, 0, 255})
 		falcon8.UpdateLEDs()
 	}
 
-	// falcon8.SetLayer(Layer1)
-	// err = falcon8.UpdateLayer()
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	// falcon8.UpdateLEDs()
+	falcon8.SetLayer(Layer1)
+	err = falcon8.UpdateLayer()
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	go func() {
-		for {
-			for i := KeyIndex1; i <= KeyIndex8; i++ {
-				r := uint8(rand.Intn(255))
-				g := uint8(rand.Intn(255))
-				b := uint8(rand.Intn(255))
-				falcon8.LEDControls.SetLEDMode(LEDMODE_CUSTOM).SetKeyColor(i, color.RGBA{r, g, b, 0})
-				fmt.Println("Set color to:", color.White)
-			}
-			err = falcon8.UpdateLEDs()
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-		}
-	}()
+	falcon8.LEDControls.SetLEDMode(LEDMODE_BREATHING).SetBrightness(BRIGHTNESS_MAX)
+	falcon8.UpdateLEDs()
+
+	// go func() {
+	// 	for {
+	// 		for i := KeyIndex1; i <= KeyIndex8; i++ {
+	// 			r := uint8(rand.Intn(255))
+	// 			g := uint8(rand.Intn(255))
+	// 			b := uint8(rand.Intn(255))
+	// 			falcon8.LEDControls.SetLEDMode(LEDMODE_CUSTOM).SetKeyColor(i, color.RGBA{r, g, b, 0})
+	// 		}
+	// 		err = falcon8.UpdateLEDs()
+	// 		if err != nil {
+	// 			fmt.Println(err)
+	// 			return
+	// 		}
+	// 	}
+	// }()
 
 	// create interrupt handler
 	c := make(chan os.Signal, 1)
