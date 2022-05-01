@@ -22,6 +22,7 @@ type Falcon8 struct {
 func New() (*Falcon8, error) {
 	f := new(Falcon8)
 	f.LEDControls = new(LEDControls)
+	f.KeyControls = new(KeyControls)
 	f.ActiveLayer = Layer1
 
 	return f, f.loadDevice()

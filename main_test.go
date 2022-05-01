@@ -74,6 +74,10 @@ func Test_Debug(t *testing.T) {
 	falcon8.LEDControls.SetLEDMode(LEDMODE_BREATHING).SetBrightness(BRIGHTNESS_MAX)
 	falcon8.UpdateLEDs()
 
+	falcon8.KeyControls.SetKey(KeyIndex1, KEY_KPASTERISK)
+	falcon8.KeyControls.SetKey(KeyIndex5, KEY_KPSLASH)
+	falcon8.UpdateKeys()
+
 	// go func() {
 	// 	for {
 	// 		for i := KeyIndex1; i <= KeyIndex8; i++ {
