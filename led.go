@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/hex"
 	"errors"
+	"fmt"
 	"image/color"
 )
 
@@ -100,6 +102,7 @@ func (l *LEDControls) SetColor(c color.Color) *LEDControls {
 // Pass in the key index and the color to set the LED to, mode must be set to LEDMODE_CUSTOM for this to work
 func (l *LEDControls) SetKeyColor(k KeyIndex, c color.Color) *LEDControls {
 	if !k.Valid() {
+		fmt.Println("Invalid key index:", k)
 		return l
 	}
 	if l.KeyColors == nil {
@@ -126,37 +129,38 @@ func (l *LEDControls) SetKeyColorInByteArray(b []byte, k KeyIndex, c color.Color
 	_r, _g, _b, _ := c.RGBA()
 	switch k {
 	case KeyIndex1:
-		b[0x7A] = byte(_r)
-		b[0x93] = byte(_g)
-		b[0xAC] = byte(_b)
+		fmt.Println("SETTING KEY COLOR:", k, c)
+		b[0x3A] = byte(_r)
+		b[0x53] = byte(_g)
+		b[0x6C] = byte(_b)
 	case KeyIndex2:
-		b[0x7B] = byte(_r)
-		b[0x94] = byte(_g)
-		b[0xAD] = byte(_b)
+		b[0x3B] = byte(_r)
+		b[0x54] = byte(_g)
+		b[0x6D] = byte(_b)
 	case KeyIndex3:
-		b[0x80] = byte(_r)
-		b[0x99] = byte(_g)
-		b[0xB2] = byte(_b)
+		b[0x40] = byte(_r)
+		b[0x59] = byte(_g)
+		b[0x72] = byte(_b)
 	case KeyIndex4:
-		b[0x7C] = byte(_r)
-		b[0x95] = byte(_g)
-		b[0xAE] = byte(_b)
+		b[0x3C] = byte(_r)
+		b[0x55] = byte(_g)
+		b[0x6E] = byte(_b)
 	case KeyIndex5:
-		b[0x7F] = byte(_r)
-		b[0x98] = byte(_g)
-		b[0xB1] = byte(_b)
+		b[0x3F] = byte(_r)
+		b[0x58] = byte(_g)
+		b[0x71] = byte(_b)
 	case KeyIndex6:
-		b[0x85] = byte(_r)
-		b[0x9E] = byte(_g)
-		b[0xB7] = byte(_b)
+		b[0x45] = byte(_r)
+		b[0x5E] = byte(_g)
+		b[0x77] = byte(_b)
 	case KeyIndex7:
-		b[0x8A] = byte(_r)
-		b[0xA3] = byte(_g)
-		b[0xBC] = byte(_b)
+		b[0x4A] = byte(_r)
+		b[0x63] = byte(_g)
+		b[0x7C] = byte(_b)
 	case KeyIndex8:
-		b[0x81] = byte(_r)
-		b[0x9A] = byte(_g)
-		b[0xB3] = byte(_b)
+		b[0x41] = byte(_r)
+		b[0x5A] = byte(_g)
+		b[0x73] = byte(_b)
 	}
 }
 
@@ -180,13 +184,52 @@ func (l *LEDControls) SetByteArray(b []byte) error {
 		b[0x89] = byte(_g)
 		b[0x8A] = byte(_b)
 	}
+
+	fmt.Println("BEFORE\n", hex.Dump(b))
 	if l.KeyColors != nil {
 		for k, c := range l.KeyColors {
 			if !k.Valid() {
 				continue
 			}
+			fmt.Println("SETTING KEY COLOR:", k, c)
 			l.SetKeyColorInByteArray(b, k, c)
 		}
 	}
+	fmt.Println("AFTER\n", hex.Dump(b))
+	return nil
+}
+
+func (f *Falcon8) UpdateLEDs() error {
+	data := make([]byte, 264)
+	data[0x00] = 0x07
+	data[0x01] = 0x82
+	data[0x02] = byte(f.ActiveLayer) // LAYER
+
+	err := f.setReport(data) // SET 1
+	if err != nil {
+		return err
+	}
+
+	err = f.getReport(data) // GET
+	if err != nil {
+		return err
+	}
+
+	// Clear last 56 bytes, set byte 2 from 0x82 to 0x02 (read to write?)
+	err = f.prepareSet2(data)
+	if err != nil {
+		return err
+	}
+
+	err = f.LEDControls.SetByteArray(data)
+	if err != nil {
+		return err
+	}
+
+	err = f.setReport(data) // SET 2
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
