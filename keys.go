@@ -60,6 +60,7 @@ func (f *Falcon8) UpdateKeys() error {
 	data[0x01] = 0x82
 	data[0x02] = byte(f.ActiveLayer) // LAYER
 
+	hexDump("KEY SET 1", data)
 	err := f.setReport(data) // SET 1
 	if err != nil {
 		return err
@@ -69,6 +70,7 @@ func (f *Falcon8) UpdateKeys() error {
 	if err != nil {
 		return err
 	}
+	hexDump("KEY GET 1", data)
 
 	// Clear last 56 bytes, set byte 2 from 0x82 to 0x02 (read to write?)
 	err = f.prepareSet2(data)
@@ -82,6 +84,7 @@ func (f *Falcon8) UpdateKeys() error {
 		return err
 	}
 
+	hexDump("KEY SET 2", data)
 	err = f.setReport(data) // SET 2
 	if err != nil {
 		return err
@@ -92,5 +95,6 @@ func (f *Falcon8) UpdateKeys() error {
 	data[0x00] = 0x07
 	data[0x01] = 0x06 // Same for layers
 
+	hexDump("KEY SET 3", data)
 	return f.setReport(data) // SET 3
 }
