@@ -1,10 +1,12 @@
 package Falcon8
 
+// Standard USB HID Keyboard Scan Codes
+
 const (
 	KEY_NONE    Key = iota // No key pressed
-	KEY_ERR_OVF            //  Keyboard Error Roll Over - used for all slots if too many keys are pressed ("Phantom key")
-	_                      //  //  Keyboard POST Fail
-	_                      //  //  Keyboard Error Undefined
+	KEY_ERR_OVF            // Keyboard Error Roll Over - used for all slots if too many keys are pressed ("Phantom key")
+	_                      // Keyboard POST Fail
+	_                      // Keyboard Error Undefined
 	KEY_A                  // Keyboard a and A
 	KEY_B                  // Keyboard b and B
 	KEY_C                  // Keyboard c and C
@@ -136,130 +138,166 @@ const (
 	KEY_COPY             // Keyboard Copy
 	KEY_PASTE            // Keyboard Paste
 	KEY_FIND             // Keyboard Find
-	KEY_MUTE             // Keyboard Mute
-	KEY_VOLUMEUP         // Keyboard Volume Up
-	KEY_VOLUMEDOWN       // Keyboard Volume Down
-	_                    //   Keyboard Locking Caps Lock
-	_                    //   Keyboard Locking Num Lock
-	_                    //   Keyboard Locking Scroll Lock
+	_                    // Keyboard Mute
+	_                    // Keyboard Volume Up
+	_                    // Keyboard Volume Down
+	_                    // Keyboard Locking Caps Lock
+	_                    // Keyboard Locking Num Lock
+	_                    // Keyboard Locking Scroll Lock
 	KEY_KPCOMMA          // Keypad Comma
-	_                    //   Keypad Equal Sign
+	_                    // Keypad Equal Sign
 	KEY_RO               // Keyboard International1
 	KEY_KATAKANAHIRAGANA // Keyboard International2
 	KEY_YEN              // Keyboard International3
 	KEY_HENKAN           // Keyboard International4
 	KEY_MUHENKAN         // Keyboard International5
 	KEY_KPJPCOMMA        // Keyboard International6
-	_                    //   Keyboard International7
-	_                    //   Keyboard International8
-	_                    //   Keyboard International9
+	_                    // Keyboard International7
+	_                    // Keyboard International8
+	_                    // Keyboard International9
 	KEY_HANGEUL          // Keyboard LANG1
 	KEY_HANJA            // Keyboard LANG2
 	KEY_KATAKANA         // Keyboard LANG3
 	KEY_HIRAGANA         // Keyboard LANG4
 	KEY_ZENKAKUHANKAKU   // Keyboard LANG5
-	_                    //   Keyboard LANG6
-	_                    //   Keyboard LANG7
-	_                    //   Keyboard LANG8
-	_                    //   Keyboard LANG9
-	_                    //   Keyboard Alternate Erase
-	_                    //   Keyboard SysReq/Attention
-	_                    //   Keyboard Cancel
-	_                    //   Keyboard Clear
-	_                    //   Keyboard Prior
-	_                    //   Keyboard Return
-	_                    //   Keyboard Separator
-	_                    //   Keyboard Out
-	_                    //   Keyboard Oper
-	_                    //   Keyboard Clear/Again
-	_                    //   Keyboard CrSel/Props
-	_                    //   Keyboard ExSel
-
-	_                //   Keypad 00
-	_                //   Keypad 000
-	_                //   Thousands Separator
-	_                //   Decimal Separator
-	_                //   Currency Unit
-	_                //   Currency Sub-unit
-	KEY_KPLEFTPAREN  // Keypad (
-	KEY_KPRIGHTPAREN // Keypad )
-	_                //   Keypad {
-	_                //   Keypad }
-	_                //   Keypad Tab
-	_                //   Keypad Backspace
-	_                //   Keypad A
-	_                //   Keypad B
-	_                //   Keypad C
-	_                //   Keypad D
-	_                //   Keypad E
-	_                //   Keypad F
-	_                //   Keypad XOR
-	_                //   Keypad ^
-	_                //   Keypad %
-	_                //   Keypad <
-	_                //   Keypad >
-	_                //   Keypad &
-	_                //   Keypad &&
-	_                //   Keypad |
-	_                //   Keypad ||
-	_                //   Keypad :
-	_                //   Keypad #
-	_                //   Keypad Space
-	_                //   Keypad @
-	_                //   Keypad !
-	_                //   Keypad Memory Store
-	_                //   Keypad Memory Recall
-	_                //   Keypad Memory Clear
-	_                //   Keypad Memory Add
-	_                //   Keypad Memory Subtract
-	_                //   Keypad Memory Multiply
-	_                //   Keypad Memory Divide
-	_                //   Keypad +/-
-	_                //   Keypad Clear
-	_                //   Keypad Clear Entry
-	_                //   Keypad Binary
-	_                //   Keypad Octal
-	_                //   Keypad Decimal
-	_                //   Keypad Hexadecimal
+	_                    // Keyboard LANG6
+	_                    // Keyboard LANG7
+	_                    // Keyboard LANG8
+	_                    // Keyboard LANG9
+	_                    // Keyboard Alternate Erase
+	_                    // Keyboard SysReq/Attention
+	_                    // Keyboard Cancel
+	_                    // Keyboard Clear
+	_                    // Keyboard Prior
+	_                    // Keyboard Return
+	_                    // Keyboard Separator
+	_                    // Keyboard Out
+	_                    // Keyboard Oper
+	_                    // Keyboard Clear/Again
+	_                    // Keyboard CrSel/Props
+	_                    // Keyboard ExSel
+	_
+	_
+	_
+	_
+	_
+	_
+	_
+	_
+	_
+	_
+	_
+	_ // Keypad 00
+	_ // Keypad 000
+	_ // Thousands Separator
+	_ // Decimal Separator
+	_ // Currency Unit
+	_ // Currency Sub-unit
+	_ // Keypad (
+	_ // Keypad )
+	_ // Keypad {
+	_ // Keypad }
+	_ // Keypad Tab
+	_ // Keypad Backspace
+	_ // Keypad A
+	_ // Keypad B
+	_ // Keypad C
+	_ // Keypad D
+	_ // Keypad E
+	_ // Keypad F
+	_ // Keypad XOR
+	_ // Keypad ^
+	_ // Keypad %
+	_ // Keypad <
+	_ // Keypad >
+	_ // Keypad &
+	_ // Keypad &&
+	_ // Keypad |
+	_ // Keypad ||
+	_ // Keypad :
+	_ // Keypad #
+	_ // Keypad Space
+	_ // Keypad @
+	_ // Keypad !
+	_ // Keypad Memory Store
+	_ // Keypad Memory Recall
+	_ // Keypad Memory Clear
+	_ // Keypad Memory Add
+	_ // Keypad Memory Subtract
+	_ // Keypad Memory Multiply
+	_ // Keypad Memory Divide
+	_ // Keypad +/-
+	_ // Keypad Clear
+	_ // Keypad Clear Entry
+	_ // Keypad Binary
+	_ // Keypad Octal
+	_ // Keypad Decimal
+	_ // Keypad Hexadecimal
+	_
+	_
 
 	KEY_LEFTCTRL   // Keyboard Left Control
 	KEY_LEFTSHIFT  // Keyboard Left Shift
 	KEY_LEFTALT    // Keyboard Left Alt
-	KEY_LEFTMETA   // Keyboard Left GUI
+	KEY_LEFTMETA   // Keyboard Left GUI (AKA Windows Key/Super Key)
 	KEY_RIGHTCTRL  // Keyboard Right Control
 	KEY_RIGHTSHIFT // Keyboard Right Shift
 	KEY_RIGHTALT   // Keyboard Right Alt
-	KEY_RIGHTMETA  // Keyboard Right GUI
+	KEY_RIGHTMETA  // Keyboard Right GUI (AKA Windows Key/Super Key)
 
-	KEY_MEDIA_PLAYPAUSE
-	KEY_MEDIA_STOPCD
-	KEY_MEDIA_PREVIOUSSONG
-	KEY_MEDIA_NEXTSONG
-	KEY_MEDIA_EJECTCD
-	KEY_MEDIA_VOLUMEUP
-	KEY_MEDIA_VOLUMEDOWN
-	KEY_MEDIA_MUTE
-	KEY_MEDIA_WWW
-	KEY_MEDIA_BACK
-	KEY_MEDIA_FORWARD
-	KEY_MEDIA_STOP
-	KEY_MEDIA_FIND
-	KEY_MEDIA_SCROLLUP
-	KEY_MEDIA_SCROLLDOWN
-	KEY_MEDIA_EDIT
-	KEY_MEDIA_SLEEP
-	KEY_MEDIA_COFFEE
-	KEY_MEDIA_REFRESH
-	KEY_MEDIA_CALC
+	// KEY_MEDIA_PLAYPAUSE
+	// KEY_MEDIA_STOPCD
+	// KEY_MEDIA_PREVIOUSSONG
+	// KEY_MEDIA_NEXTSONG
+	// KEY_MEDIA_EJECTCD
+	// KEY_MEDIA_VOLUMEUP
+	// KEY_MEDIA_VOLUMEDOWN
+	// KEY_MEDIA_MUTE
+	// KEY_MEDIA_WWW
+	// KEY_MEDIA_BACK
+	// KEY_MEDIA_FORWARD
+	// KEY_MEDIA_STOP
+	// KEY_MEDIA_FIND
+	// KEY_MEDIA_SCROLLUP
+	// KEY_MEDIA_SCROLLDOWN
+	// KEY_MEDIA_EDIT
+	// KEY_MEDIA_SLEEP
+	// KEY_MEDIA_COFFEE
+	// KEY_MEDIA_REFRESH
+	// KEY_MEDIA_CALC
+)
 
-	// KEY_MUSIC      // Music
-	// KEY_MEDIA_STOP // Media Stop
-	// KEY_MEDIA_PREV // Media Previous
-	// KEY_PAUSE_PLAY // Pause/Play
-	// KEY_MEDIA_NEXT // Media Next
-	// KEY_MUTE       // Mute
-	// KEY_VOLUME_DN  // Volume Up
-	// KEY_VOLUME_UP  // Volume Down
+// Unique key codes for the Falcon-8.
 
-	// KEY_MEDIA_CALC // Media Calculator
+const (
+	KEY_DISABLE Key = 0x00 // Disable key
+
+	KEY_MEDIA_LAUNCH Key = 0xa4 // Launch music??? (Music icon in Falcon-8 Software..)
+	KEY_MEDIA_STOP   Key = 0xa5 // Media Stop
+	KEY_MEDIA_PREV   Key = 0xa6 // Media Previous
+	KEY_PLAYPAUSE    Key = 0xa7 // Play/Pause
+	KEY_MEDIA_NEXT   Key = 0xa8 // Media Next
+	KEY_MUTE         Key = 0xa9 // Mute
+	KEY_VOLUMEDOWN   Key = 0xab // Volume Up
+	KEY_VOLUMEUP     Key = 0xaa // Volume Down
+
+	KEY_LAYER1      Key = 0xb4 // Switch to Layer 1
+	KEY_LAYER2      Key = 0xb5 // Switch to Layer 2
+	KEY_LAYER3      Key = 0xb6 // Switch to Layer 3
+	KEY_LAYER4      Key = 0xb7 // Switch to Layer 4
+	KEY_LAYER5      Key = 0xb8 // Switch to Layer 5
+	KEY_LAYER_CYCLE Key = 0xb9 // Cycle through the 5 layers.
+
+	KEY_LED_BRIGHTNESS_CYCLE Key = 0xbb // Cycle through the brightness levels.
+	KEY_LED_MODE_CYCLE       Key = 0xbc // Cycle through the LED modes.
+
+	KEY_MOUSE_LEFT_CLICK   Key = 0xbe // Mouse left click
+	KEY_MOUSE_RIGHT_CLICK  Key = 0xbf // Mouse right click
+	KEY_MOUSE_MIDDLE_CLICK Key = 0xc0 // Mouse middle click
+	KEY_MOUSE_BACKWARD     Key = 0xc3 // Mouse backward click
+	KEY_MOUSE_FORWARD      Key = 0xc4 // Mouse forward click
+
+	KEY_LOCK_UNLOCK_WHOLE_KEYS  Key = 0xfa // Lock/Unlock the whole keyboard.
+	DONOTUSE_KEY_LAUNCH_PROGRAM Key = 0xf7 // Launch a program. (Doesn't work on Linux yet.)
+	DONOTUSE_KEY_SET_MACRO      Key = 0xf8 // Set a macro (Doesn't work on Linux yet.)
 )

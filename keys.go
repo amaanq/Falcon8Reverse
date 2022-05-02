@@ -4,10 +4,6 @@ import "errors"
 
 type Key byte
 
-func (k Key) Valid() bool {
-	return k >= KEY_MOD_LCTRL && k <= KEY_MEDIA_CALC
-}
-
 var (
 	KeyIndexKeyMap = map[KeyIndex]byte{
 		KeyIndex1: 0x08,
@@ -27,7 +23,7 @@ type KeyControls struct {
 
 // Pass in the key index and the color to set the LED to, mode must be set to LEDMODE_CUSTOM otherwise this will have no effect.
 func (k *KeyControls) SetKey(ki KeyIndex, key Key) *KeyControls {
-	if !ki.Valid() || !key.Valid() {
+	if !ki.Valid() {
 		return k
 	}
 	if k.Keys == nil {
@@ -44,7 +40,7 @@ func (k *KeyControls) setByteArray(b []byte) error {
 
 	if k.Keys != nil {
 		for k, v := range k.Keys {
-			if !k.Valid() || !v.Valid() {
+			if !k.Valid() {
 				continue
 			}
 			b[KeyIndexKeyMap[k]] = byte(v) // set key to activate when kth is pressed
