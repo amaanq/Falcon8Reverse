@@ -299,5 +299,5 @@ const (
 
 	KEY_LOCK_UNLOCK_WHOLE_KEYS  Key = 0xfa // Lock/Unlock the whole keyboard.
 	DONOTUSE_KEY_LAUNCH_PROGRAM Key = 0xf7 // Launch a program. (Doesn't work on Linux yet.)
-	DONOTUSE_KEY_SET_MACRO      Key = 0xf8 // Set a macro (Doesn't work on Linux yet.)
+	KEY_SET_MACRO               Key = 0xf8 // Set a macro (Doesn't work on Linux yet.)
 )
