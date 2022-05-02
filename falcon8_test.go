@@ -1,9 +1,6 @@
 package Falcon8
 
 import (
-	//"fmt"
-	//"os"
-	//"os/signal"
 	"testing"
 )
 
@@ -14,33 +11,6 @@ func Test_Debug(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-
-	// // Iterate through available interfaces for this configuration
-	// for _, desc := range config.Desc.Interfaces {
-	// 	if desc.Number != 2 {
-	// 		continue
-	// 	}
-	// 	intf, err := config.Interface(desc.Number, 0)
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// 	falcon8.Intf = intf
-
-	// 	// Iterate through endpoints available for this interface.
-	// 	for _, endpointDesc := range intf.Setting.Endpoints {
-	// 		// We only want to read, so we're looking for IN endpoints.
-	// 		if endpointDesc.Direction == gousb.EndpointDirectionIn {
-	// 			endpoint, err := intf.InEndpoint(endpointDesc.Number)
-	// 			if err != nil {
-	// 				panic(err)
-	// 			}
-	// 			falcon8.Endpoint = endpoint
-	// 			go falcon8.read(endpoint, endpointDesc.PollInterval, endpointDesc.MaxPacketSize)
-	// 			// When we get here, we have an endpoint where we can
-	// 			// read data from the USB device
-	// 		}
-	// 	}
-	// }
 
 	// Red
 	// if false {
@@ -77,11 +47,5 @@ func Test_Debug(t *testing.T) {
 	// 	}
 	// }()
 
-	// create interrupt handler
-	// c := make(chan os.Signal, 1)
-	// signal.Notify(c, os.Interrupt)
-
-	// sig := <-c
-	// fmt.Printf("\nSignal received: %s\n", sig)
 	falcon8.Close()
 }

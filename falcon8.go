@@ -67,7 +67,6 @@ func (falcon8 *Falcon8) Open() error {
 		if err != nil {
 			fmt.Printf("Falcon-8: error claiming interface: %s\n", err.Error())
 		} else {
-			fmt.Println(iface)
 			falcon8.Interfaces[n] = iface
 		}
 	}
@@ -93,8 +92,6 @@ func (falcon8 *Falcon8) Close() {
 		err = falcon8.Config.Close()
 		if err != nil {
 			fmt.Println("Falcon-8 error closing config:", err)
-		} else {
-			fmt.Println("Falcon-8 config 1 closed")
 		}
 	}
 
@@ -102,8 +99,6 @@ func (falcon8 *Falcon8) Close() {
 		err = falcon8.Device.Close()
 		if err != nil {
 			fmt.Println("Falcon-8 error closing device:", err)
-		} else {
-			fmt.Println("Falcon-8 device closed")
 		}
 	}
 
@@ -111,8 +106,6 @@ func (falcon8 *Falcon8) Close() {
 		err = falcon8.Context.Close()
 		if err != nil {
 			fmt.Println("Falcon-8 error closing context:", err)
-		} else {
-			fmt.Println("Falcon-8 context closed")
 		}
 	}
 }

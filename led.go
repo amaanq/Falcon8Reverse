@@ -189,7 +189,6 @@ func (f *Falcon8) UpdateLEDs() error {
 	data[0x01] = 0x82
 	data[0x02] = byte(f.ActiveLayer) // LAYER
 
-	hexDump("LED SET 1", data)
 	err := f.setReport(data) // SET 1
 	if err != nil {
 		return err
@@ -199,7 +198,6 @@ func (f *Falcon8) UpdateLEDs() error {
 	if err != nil {
 		return err
 	}
-	hexDump("LED GET 1", data)
 
 	// Clear last 56 bytes, set byte 2 from 0x82 to 0x02 (read to write?)
 	err = f.prepareSet2(data)
@@ -213,6 +211,5 @@ func (f *Falcon8) UpdateLEDs() error {
 		return err
 	}
 
-	hexDump("LED SET 2", data)
 	return f.setReport(data) // SET 2
 }
