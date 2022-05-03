@@ -38,6 +38,7 @@ func (f *Falcon8) prepareSet2(data []byte) error {
 	return nil
 }
 
+// Pretty hex dump of packet data
 func hexDump(name string, data []byte) {
 	fmt.Printf(name + "\n" + hex.Dump(data))
 }

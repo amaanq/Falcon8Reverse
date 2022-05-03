@@ -30,6 +30,7 @@ type Falcon8 struct {
 	KeyControls *KeyControls
 }
 
+// Create a new struct to interact with the Falcon-8 RGB Keypad
 func New() *Falcon8 {
 	falcon8 := new(Falcon8)
 
@@ -42,6 +43,11 @@ func New() *Falcon8 {
 	return falcon8
 }
 
+// Opens the device for usage
+//
+// Note: The device will not be usable outside of the program this was called in until it is closed.
+//
+// All interfaces are claimed so that when closed they are all released back to the kernel.
 func (falcon8 *Falcon8) Open() error {
 	if falcon8.isOpen {
 		return errors.New("falcon8: device already open")
@@ -85,6 +91,8 @@ func (falcon8 *Falcon8) Open() error {
 	return nil
 }
 
+// Closes the device and releases all interfaces so that it is usable in any application.
+// This must be called before exiting the program.
 func (falcon8 *Falcon8) Close() {
 	var err error
 	fmt.Println("Closing Falcon8")
@@ -189,6 +197,9 @@ func (falcon8 *Falcon8) ReadLoop(endpoint *gousb.InEndpoint, buffer chan []byte,
 	}
 }
 
+// Save the 208 bytes of intact data from the device.
+// A hash of the data is also saved for sanity checking.
+// TODO: Save macro packets too
 func (falcon8 *Falcon8) SaveConfig(filename string) error {
 	file, err := os.Create(filename)
 	if err != nil {
@@ -222,6 +233,8 @@ func (falcon8 *Falcon8) SaveConfig(filename string) error {
 	return err
 }
 
+// Load the 208 bytes of intact data from the device.
+// This checks the hash to make sure the data is valid.
 func (falcon8 *Falcon8) LoadConfig(filename string) error {
 	file, err := os.Open(filename)
 	if err != nil {

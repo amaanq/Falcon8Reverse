@@ -2,34 +2,19 @@ package Falcon8
 
 import "errors"
 
-type Key byte
-
-var (
-	KeyIndexKeyMap = map[KeyIndex]byte{
-		KeyIndex1: 0x08,
-		KeyIndex2: 0x0D,
-		KeyIndex3: 0x12,
-		KeyIndex4: 0x17,
-		KeyIndex5: 0x09,
-		KeyIndex6: 0x0E,
-		KeyIndex7: 0x13,
-		KeyIndex8: 0x18,
-	}
-)
-
 type KeyControls struct {
-	Keys map[KeyIndex]Key // seems to be bytes 0x08-0x0F
+	Keys map[Key]KeyCode
 }
 
 // Pass in the key index and the color to set the LED to, mode must be set to LEDMODE_CUSTOM otherwise this will have no effect.
-func (k *KeyControls) SetKey(ki KeyIndex, key Key) *KeyControls {
-	if !ki.Valid() {
+func (k *KeyControls) SetKey(key Key, keyCode KeyCode) *KeyControls {
+	if !key.Valid() {
 		return k
 	}
 	if k.Keys == nil {
-		k.Keys = make(map[KeyIndex]Key)
+		k.Keys = make(map[Key]KeyCode)
 	}
-	k.Keys[ki] = key
+	k.Keys[key] = keyCode
 	return k
 }
 
@@ -43,7 +28,7 @@ func (k *KeyControls) setByteArray(b []byte) error {
 			if !k.Valid() {
 				continue
 			}
-			b[KeyIndexKeyMap[k]] = byte(v) // set key to activate when kth is pressed
+			b[KeyMappings[k].KeyIndex] = byte(v) // set key to register when kth key on keypad is pressed
 		}
 	}
 	return nil

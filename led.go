@@ -5,45 +5,6 @@ import (
 	"image/color"
 )
 
-type KeyIndex uint8
-
-const (
-	// First row, first key (top left)
-	KeyIndex1 KeyIndex = iota
-	// First row, second key
-	KeyIndex2
-	// First row, third key
-	KeyIndex3
-	// First row, fourth key (top right)
-	KeyIndex4
-	// Second row, first key (bottom left)
-	KeyIndex5
-	// Second row, second key
-	KeyIndex6
-	// Second row, third key
-	KeyIndex7
-	// Second row, fourth key (bottom right)
-	KeyIndex8
-)
-
-var (
-	// Maps all the key indexes to their respective byte positions in the USB packet
-	KeyIndexLEDMap = map[KeyIndex][3]byte{
-		KeyIndex1: {0x3A, 0x53, 0x6C},
-		KeyIndex2: {0x3B, 0x54, 0x6D},
-		KeyIndex3: {0x40, 0x59, 0x72},
-		KeyIndex4: {0x3C, 0x55, 0x6E},
-		KeyIndex5: {0x3F, 0x58, 0x71},
-		KeyIndex6: {0x45, 0x5E, 0x77},
-		KeyIndex7: {0x4A, 0x63, 0x7C},
-		KeyIndex8: {0x41, 0x5A, 0x73},
-	}
-)
-
-func (k KeyIndex) Valid() bool {
-	return k >= KeyIndex1 && k <= KeyIndex8
-}
-
 type LEDMode byte
 
 const (
@@ -84,11 +45,11 @@ const (
 )
 
 type LEDControls struct {
-	LEDMode    *LEDMode                 // 0x85
-	Brightness *Brightness              // 0x86
-	Flow       *Flow                    // 0x87
-	Color      color.Color              // 0x88 - 0x8A
-	KeyColors  map[KeyIndex]color.Color // sporadic occurrences, refer to KeyIndexLEDMap
+	LEDMode    *LEDMode            // 0x85
+	Brightness *Brightness         // 0x86
+	Flow       *Flow               // 0x87
+	Color      color.Color         // 0x88 - 0x8A
+	KeyColors  map[Key]color.Color // sporadic occurrences, refer to KeyMappings
 }
 
 func (l *LEDControls) SetLEDMode(m LEDMode) *LEDControls {
@@ -114,36 +75,37 @@ func (l *LEDControls) SetColor(c color.Color) *LEDControls {
 }
 
 // Pass in the key index and the color to set the LED to, mode must be set to LEDMODE_CUSTOM otherwise this will have no effect.
-func (l *LEDControls) SetKeyColor(k KeyIndex, c color.Color) *LEDControls {
+func (l *LEDControls) SetKeyColor(k Key, c color.Color) *LEDControls {
 	if !k.Valid() {
 		return l
 	}
 	if l.KeyColors == nil {
-		l.KeyColors = make(map[KeyIndex]color.Color)
+		l.KeyColors = make(map[Key]color.Color)
 	}
 	l.KeyColors[k] = c
 	return l
 }
 
 // Pass in the key index to turn off its LED, mode must be set to LEDMODE_CUSTOM otherwise this will have no effect.
-func (l *LEDControls) DisableKeyColor(k KeyIndex) *LEDControls {
+func (l *LEDControls) DisableKeyColor(k Key) *LEDControls {
 	if !k.Valid() {
 		return l
 	}
 	if l.KeyColors == nil {
-		l.KeyColors = make(map[KeyIndex]color.Color)
+		l.KeyColors = make(map[Key]color.Color)
 	}
 	l.KeyColors[k] = color.Black
 	return l
 }
 
 // Do not use or modify this function
-func (l *LEDControls) setKeyColorsInByteArray(b []byte, k KeyIndex, c color.Color) {
+func (l *LEDControls) setKeyColorsInByteArray(b []byte, key Key, c color.Color) {
 	_r, _g, _b, _ := c.RGBA()
 
-	b[KeyIndexLEDMap[k][0]] = byte(_r)
-	b[KeyIndexLEDMap[k][1]] = byte(_g)
-	b[KeyIndexLEDMap[k][2]] = byte(_b)
+	// Get the Key Color Indexes of a particular key where order is R G B, then set that byte in b to the color value
+	b[KeyMappings[key].KeyColorIndexes[0x00]] = byte(_r)
+	b[KeyMappings[key].KeyColorIndexes[0x01]] = byte(_g)
+	b[KeyMappings[key].KeyColorIndexes[0x02]] = byte(_b)
 }
 
 // Writes Mode, Brightness, Flow, Color and KeyColors to the byte array

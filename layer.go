@@ -23,6 +23,8 @@ func (f *Falcon8) SetLayer(layer Layer) {
 		f.ActiveLayer = layer
 	}
 }
+
+// Call this to update the active layer on the device
 func (f *Falcon8) UpdateLayer() error {
 	if !f.ActiveLayer.Valid() {
 		return errors.New("falcon8: invalid layer")

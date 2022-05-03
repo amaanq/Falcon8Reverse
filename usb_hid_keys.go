@@ -1,38 +1,39 @@
 package Falcon8
 
 // Standard USB HID Keyboard Scan Codes
+type KeyCode byte
 
 const (
-	KEY_NONE    Key = iota // No key pressed
-	KEY_ERR_OVF            // Keyboard Error Roll Over - used for all slots if too many keys are pressed ("Phantom key")
-	_                      // Keyboard POST Fail
-	_                      // Keyboard Error Undefined
-	KEY_A                  // Keyboard a and A
-	KEY_B                  // Keyboard b and B
-	KEY_C                  // Keyboard c and C
-	KEY_D                  // Keyboard d and D
-	KEY_E                  // Keyboard e and E
-	KEY_F                  // Keyboard f and F
-	KEY_G                  // Keyboard g and G
-	KEY_H                  // Keyboard h and H
-	KEY_I                  // Keyboard i and I
-	KEY_J                  // Keyboard j and J
-	KEY_K                  // Keyboard k and K
-	KEY_L                  // Keyboard l and L
-	KEY_M                  // Keyboard m and M
-	KEY_N                  // Keyboard n and N
-	KEY_O                  // Keyboard o and O
-	KEY_P                  // Keyboard p and P
-	KEY_Q                  // Keyboard q and Q
-	KEY_R                  // Keyboard r and R
-	KEY_S                  // Keyboard s and S
-	KEY_T                  // Keyboard t and T
-	KEY_U                  // Keyboard u and U
-	KEY_V                  // Keyboard v and V
-	KEY_W                  // Keyboard w and W
-	KEY_X                  // Keyboard x and X
-	KEY_Y                  // Keyboard y and Y
-	KEY_Z                  // Keyboard z and Z
+	KEY_NONE    KeyCode = iota // No key pressed
+	KEY_ERR_OVF                // Keyboard Error Roll Over - used for all slots if too many keys are pressed ("Phantom key")
+	_                          // Keyboard POST Fail
+	_                          // Keyboard Error Undefined
+	KEY_A                      // Keyboard a and A
+	KEY_B                      // Keyboard b and B
+	KEY_C                      // Keyboard c and C
+	KEY_D                      // Keyboard d and D
+	KEY_E                      // Keyboard e and E
+	KEY_F                      // Keyboard f and F
+	KEY_G                      // Keyboard g and G
+	KEY_H                      // Keyboard h and H
+	KEY_I                      // Keyboard i and I
+	KEY_J                      // Keyboard j and J
+	KEY_K                      // Keyboard k and K
+	KEY_L                      // Keyboard l and L
+	KEY_M                      // Keyboard m and M
+	KEY_N                      // Keyboard n and N
+	KEY_O                      // Keyboard o and O
+	KEY_P                      // Keyboard p and P
+	KEY_Q                      // Keyboard q and Q
+	KEY_R                      // Keyboard r and R
+	KEY_S                      // Keyboard s and S
+	KEY_T                      // Keyboard t and T
+	KEY_U                      // Keyboard u and U
+	KEY_V                      // Keyboard v and V
+	KEY_W                      // Keyboard w and W
+	KEY_X                      // Keyboard x and X
+	KEY_Y                      // Keyboard y and Y
+	KEY_Z                      // Keyboard z and Z
 
 	KEY_1 // Keyboard 1 and !
 	KEY_2 // Keyboard 2 and @
@@ -270,34 +271,34 @@ const (
 // Unique key codes for the Falcon-8.
 
 const (
-	KEY_DISABLE Key = 0x00 // Disable key
+	KEY_DISABLE KeyCode = 0x00 // Disable key
 
-	KEY_MEDIA_LAUNCH Key = 0xa4 // Launch music??? (Music icon in Falcon-8 Software..)
-	KEY_MEDIA_STOP   Key = 0xa5 // Media Stop
-	KEY_MEDIA_PREV   Key = 0xa6 // Media Previous
-	KEY_PLAYPAUSE    Key = 0xa7 // Play/Pause
-	KEY_MEDIA_NEXT   Key = 0xa8 // Media Next
-	KEY_MUTE         Key = 0xa9 // Mute
-	KEY_VOLUMEDOWN   Key = 0xab // Volume Up
-	KEY_VOLUMEUP     Key = 0xaa // Volume Down
+	KEY_MEDIA_LAUNCH KeyCode = 0xa4 // Launch music??? (Music icon in Falcon-8 Software..)
+	KEY_MEDIA_STOP   KeyCode = 0xa5 // Media Stop
+	KEY_MEDIA_PREV   KeyCode = 0xa6 // Media Previous
+	KEY_PLAYPAUSE    KeyCode = 0xa7 // Play/Pause
+	KEY_MEDIA_NEXT   KeyCode = 0xa8 // Media Next
+	KEY_MUTE         KeyCode = 0xa9 // Mute
+	KEY_VOLUMEDOWN   KeyCode = 0xab // Volume Up
+	KEY_VOLUMEUP     KeyCode = 0xaa // Volume Down
 
-	KEY_LAYER1      Key = 0xb4 // Switch to Layer 1
-	KEY_LAYER2      Key = 0xb5 // Switch to Layer 2
-	KEY_LAYER3      Key = 0xb6 // Switch to Layer 3
-	KEY_LAYER4      Key = 0xb7 // Switch to Layer 4
-	KEY_LAYER5      Key = 0xb8 // Switch to Layer 5
-	KEY_LAYER_CYCLE Key = 0xb9 // Cycle through the 5 layers.
+	KEY_LAYER1      KeyCode = 0xb4 // Switch to Layer 1
+	KEY_LAYER2      KeyCode = 0xb5 // Switch to Layer 2
+	KEY_LAYER3      KeyCode = 0xb6 // Switch to Layer 3
+	KEY_LAYER4      KeyCode = 0xb7 // Switch to Layer 4
+	KEY_LAYER5      KeyCode = 0xb8 // Switch to Layer 5
+	KEY_LAYER_CYCLE KeyCode = 0xb9 // Cycle through the 5 layers.
 
-	KEY_LED_BRIGHTNESS_CYCLE Key = 0xbb // Cycle through the brightness levels.
-	KEY_LED_MODE_CYCLE       Key = 0xbc // Cycle through the LED modes.
+	KEY_LED_BRIGHTNESS_CYCLE KeyCode = 0xbb // Cycle through the brightness levels.
+	KEY_LED_MODE_CYCLE       KeyCode = 0xbc // Cycle through the LED modes.
 
-	KEY_MOUSE_LEFT_CLICK   Key = 0xbe // Mouse left click
-	KEY_MOUSE_RIGHT_CLICK  Key = 0xbf // Mouse right click
-	KEY_MOUSE_MIDDLE_CLICK Key = 0xc0 // Mouse middle click
-	KEY_MOUSE_BACKWARD     Key = 0xc3 // Mouse backward click
-	KEY_MOUSE_FORWARD      Key = 0xc4 // Mouse forward click
+	KEY_MOUSE_LEFT_CLICK   KeyCode = 0xbe // Mouse left click
+	KEY_MOUSE_RIGHT_CLICK  KeyCode = 0xbf // Mouse right click
+	KEY_MOUSE_MIDDLE_CLICK KeyCode = 0xc0 // Mouse middle click
+	KEY_MOUSE_BACKWARD     KeyCode = 0xc3 // Mouse backward click
+	KEY_MOUSE_FORWARD      KeyCode = 0xc4 // Mouse forward click
 
-	KEY_LOCK_UNLOCK_WHOLE_KEYS  Key = 0xfa // Lock/Unlock the whole keyboard.
-	DONOTUSE_KEY_LAUNCH_PROGRAM Key = 0xf7 // Launch a program. (Doesn't work on Linux yet.)
-	KEY_SET_MACRO               Key = 0xf8 // Set a macro (Doesn't work on Linux yet.)
+	KEY_LOCK_UNLOCK_WHOLE_KEYS  KeyCode = 0xfa // Lock/Unlock the whole keyboard.
+	DONOTUSE_KEY_LAUNCH_PROGRAM KeyCode = 0xf7 // Launch a program. (Doesn't work on Linux yet.)
+	KEY_SET_MACRO               KeyCode = 0xf8 // Set a macro (Doesn't work on Linux yet.)
 )
