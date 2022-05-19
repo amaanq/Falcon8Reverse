@@ -1,7 +1,5 @@
 package Falcon8
 
-import "errors"
-
 type KeyControls struct {
 	Keys map[Key]KeyCode
 }
@@ -20,7 +18,7 @@ func (k *KeyControls) SetKey(key Key, keyCode KeyCode) *KeyControls {
 
 func (k *KeyControls) setByteArray(b []byte) error {
 	if len(b) != 264 {
-		return errors.New("invalid byte array length, must be 264 for Falcon8")
+		return ErrInvalidByteArrayLength
 	}
 
 	if k.Keys != nil {

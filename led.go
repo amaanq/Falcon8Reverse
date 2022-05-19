@@ -1,7 +1,6 @@
 package Falcon8
 
 import (
-	"errors"
 	"image/color"
 )
 
@@ -111,7 +110,7 @@ func (l *LEDControls) setKeyColorsInByteArray(b []byte, key Key, c color.Color) 
 // Writes Mode, Brightness, Flow, Color and KeyColors to the byte array
 func (l *LEDControls) setByteArray(b []byte) error {
 	if len(b) != 264 {
-		return errors.New("invalid byte array length, must be 264 for Falcon8")
+		return ErrInvalidByteArrayLength
 	}
 
 	if l.LEDMode != nil {

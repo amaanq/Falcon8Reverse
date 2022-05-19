@@ -1,9 +1,5 @@
 package Falcon8
 
-import (
-	"errors"
-)
-
 type Layer byte
 
 const (
@@ -27,7 +23,7 @@ func (f *Falcon8) SetLayer(layer Layer) {
 // Call this to update the active layer on the device
 func (f *Falcon8) UpdateLayer() error {
 	if !f.ActiveLayer.Valid() {
-		return errors.New("falcon8: invalid layer")
+		return ErrInvalidLayer
 	}
 
 	data := make([]byte, 264)

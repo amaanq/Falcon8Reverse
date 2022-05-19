@@ -1,12 +1,8 @@
 package Falcon8
 
 import (
-	"bytes"
-	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/google/gousb"
@@ -50,7 +46,7 @@ func New() *Falcon8 {
 // All interfaces are claimed so that when closed they are all released back to the kernel.
 func (falcon8 *Falcon8) Open() error {
 	if falcon8.isOpen {
-		return errors.New("falcon8: device already open")
+		return ErrDeviceAlreadyOpen
 	}
 
 	fmt.Println("Opening Falcon8")
@@ -78,14 +74,14 @@ func (falcon8 *Falcon8) Open() error {
 	for n, desc := range falcon8.Config.Desc.Interfaces {
 		iface, err := falcon8.Config.Interface(desc.Number, 0)
 		if err != nil {
-			fmt.Printf("Falcon-8: error claiming interface: %s\n", err.Error())
+			return fmt.Errorf(ErrClaimingInterface.Error(), err.Error())
 		} else {
 			falcon8.Interfaces[n] = iface
 		}
 	}
 
 	if falcon8.Interfaces[0] == nil {
-		return fmt.Errorf("Falcon-8: failed to claim howler config interface")
+		return ErrClaimingConfig
 	}
 
 	return nil
@@ -93,7 +89,7 @@ func (falcon8 *Falcon8) Open() error {
 
 // Closes the device and releases all interfaces so that it is usable in any application.
 // This must be called before exiting the program.
-func (falcon8 *Falcon8) Close() {
+func (falcon8 *Falcon8) Close() error {
 	var err error
 	fmt.Println("Closing Falcon8")
 
@@ -106,23 +102,24 @@ func (falcon8 *Falcon8) Close() {
 	if falcon8.Config != nil {
 		err = falcon8.Config.Close()
 		if err != nil {
-			fmt.Println("Falcon-8 error closing config:", err)
+			return fmt.Errorf(ErrClosingConfig.Error(), err.Error())
 		}
 	}
 
 	if falcon8.Device != nil {
 		err = falcon8.Device.Close()
 		if err != nil {
-			fmt.Println("Falcon-8 error closing device:", err)
+			return fmt.Errorf(ErrClosingDevice.Error(), err.Error())
 		}
 	}
 
 	if falcon8.Context != nil {
 		err = falcon8.Context.Close()
 		if err != nil {
-			fmt.Println("Falcon-8 error closing context:", err)
+			return fmt.Errorf(ErrClosingContext.Error(), err.Error())
 		}
 	}
+	return nil
 }
 
 // Read will read from the given endpoint and return only the data that was read.
@@ -148,11 +145,11 @@ func (falcon8 *Falcon8) ReadAll(buffer chan []byte, stop chan bool, print bool) 
 			if endpoint.Direction == gousb.EndpointDirectionIn {
 				endpoint, err := iface.InEndpoint(endpoint.Number)
 				if err != nil {
-					fmt.Println("Falcon-8: error getting in endpoint:", err)
+					fmt.Println("falcon-8: error getting in endpoint:", err)
 					continue
 				}
 				if endpoint == nil {
-					fmt.Println("Falcon-8: failed to get in endpoint")
+					fmt.Println("falcon-8: failed to get in endpoint")
 					continue
 				}
 				i++
@@ -195,132 +192,4 @@ func (falcon8 *Falcon8) ReadLoop(endpoint *gousb.InEndpoint, buffer chan []byte,
 			return
 		}
 	}
-}
-
-// Save the 208 bytes of intact data from the device.
-// A hash of the data is also saved for sanity checking.
-// TODO: Save macro packets too
-func (falcon8 *Falcon8) SaveConfig(filename string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	data := make([]byte, 264)
-	data[0x00] = 0x07
-	data[0x01] = 0x82
-	data[0x02] = byte(falcon8.ActiveLayer)
-	err = falcon8.setReport(data) // SET
-	if err != nil {
-		return err
-	}
-
-	err = falcon8.getReport(data) // GET
-	if err != nil {
-		return err
-	}
-
-	hash := sha256.New()
-	hash.Write(data[:0xD0])
-	hashSum := hash.Sum(nil)
-
-	_, err = file.Write(data[:0xD0])
-	if err != nil {
-		return err
-	}
-	_, err = file.Write(hashSum)
-	return err
-}
-
-// Load the 208 bytes of intact data from the device.
-// This checks the hash to make sure the data is valid.
-func (falcon8 *Falcon8) LoadConfig(filename string) error {
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	data := make([]byte, 264)
-	n, err := file.Read(data[:0xD0])
-	if err != nil {
-		return err
-	}
-	if n != 0xD0 {
-		return fmt.Errorf("Falcon-8: failed to read enough data bytes from file")
-	}
-
-	hash := sha256.New()
-	hash.Write(data[:0xD0])
-	hashSum := hash.Sum(nil)
-
-	hashSumCompare := make([]byte, 32)
-	n, err = file.Read(hashSumCompare)
-	if err != nil {
-		return err
-	}
-	if n != 32 {
-		return fmt.Errorf("Falcon-8: failed to read enough checksum bytes from file")
-	}
-
-	if !bytes.Equal(hashSum, hashSumCompare) {
-		return fmt.Errorf("Falcon-8: checksum mismatch")
-	}
-
-	falcon8.ActiveLayer = Layer(data[0x02])
-	data[0x01] = 0x02 // only thing to change
-
-	err = falcon8.setReport(data) // SET
-	return err
-}
-
-// No checksum
-func (falcon8 *Falcon8) unsafeSaveConfig(filename string) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	data := make([]byte, 264)
-	data[0x00] = 0x07
-	data[0x01] = 0x82
-	data[0x02] = byte(falcon8.ActiveLayer)
-	err = falcon8.setReport(data) // SET
-	if err != nil {
-		return err
-	}
-
-	err = falcon8.getReport(data) // GET
-	if err != nil {
-		return err
-	}
-
-	_, err = file.Write(data[:0xD0])
-	return err
-}
-
-// No checksum
-func (falcon8 *Falcon8) unsafeLoadConfig(filename string) error {
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	data := make([]byte, 264)
-	n, err := file.Read(data[:0xD0])
-	if err != nil {
-		return err
-	}
-	if n != 0xD0 {
-		return fmt.Errorf("Falcon-8: failed to read enough data bytes from file")
-	}
-
-	falcon8.ActiveLayer = Layer(data[0x02])
-	data[0x01] = 0x02 // only thing to change
-
-	err = falcon8.setReport(data) // SET
-	return err
 }
